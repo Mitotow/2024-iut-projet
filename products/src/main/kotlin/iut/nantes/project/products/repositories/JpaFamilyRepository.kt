@@ -5,9 +5,11 @@ import iut.nantes.project.products.interfaces.IRepository
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import jakarta.transaction.Transactional
+import org.springframework.context.annotation.Profile
 import java.util.*
 
-open class FamilyRepository: IRepository<Family, UUID> {
+@Profile("!dev")
+open class JpaFamilyRepository: IRepository<Family, UUID> {
     @PersistenceContext
     private lateinit var entityManager: EntityManager
 

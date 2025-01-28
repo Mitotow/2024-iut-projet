@@ -5,9 +5,8 @@ import iut.nantes.project.products.models.Family
 import iut.nantes.project.products.models.Product
 import java.util.UUID
 
-class ProductService(
+class FamilyService(
     private val productRepository: IRepository<Product, UUID>,
     private val familyRepository: IRepository<Family, UUID>,
 ) {
-    
 }
