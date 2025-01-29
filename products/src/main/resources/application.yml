@@ -1,6 +1,9 @@
-
 spring:
-  application.name: products
+  profiles:
+    active: dev
+
+  application:
+    name: products
 
   jpa:
     hibernate:
@@ -18,3 +21,8 @@ spring:
 
 server:
   port: 8081
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    iut.nantes.project.products.controllers: DEBUG

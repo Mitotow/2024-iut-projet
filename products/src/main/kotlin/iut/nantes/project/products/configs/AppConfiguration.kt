@@ -2,6 +2,7 @@ package iut.nantes.project.products.configs
 
 import iut.nantes.project.products.controllers.ProductController
 import iut.nantes.project.products.interfaces.IRepository
+import iut.nantes.project.products.interfaces.ISearchableByName
 import iut.nantes.project.products.models.Family
 import iut.nantes.project.products.models.Product
 import iut.nantes.project.products.repositories.HmFamilyRepository
@@ -27,31 +28,26 @@ class AppConfiguration {
 
     @Bean
     @Profile("!dev")
-    fun familyRepository(): IRepository<Family, UUID> = JpaFamilyRepository()
+    fun familyRepository(): ISearchableByName<Family, UUID> = JpaFamilyRepository()
 
     @Bean
     @Profile("dev")
-    fun familyRepositoryDev(): IRepository<Family, UUID> = HmFamilyRepository()
+    fun familyRepositoryDev(): ISearchableByName<Family, UUID> = HmFamilyRepository()
 
     // Services
     @Bean
     @Scope(BeanDefinition.SCOPE_SINGLETON)
     fun productService(
         productRepository: IRepository<Product, UUID>,
-        familyRepository: IRepository<Family, UUID>,
+        familyRepository: ISearchableByName<Family, UUID>,
     ) = ProductService(productRepository, familyRepository)
 
     @Bean
     @Scope(BeanDefinition.SCOPE_SINGLETON)
     fun familyService(
         productRepository: IRepository<Product, UUID>,
-        familyRepository: IRepository<Family, UUID>
+        familyRepository: ISearchableByName<Family, UUID>
     ) = FamilyService(productRepository, familyRepository)
-
-    // Controllers
-    @Bean
-    @Scope(BeanDefinition.SCOPE_SINGLETON)
-    fun productController() = ProductController()
 
     companion object {
         fun getContext() =

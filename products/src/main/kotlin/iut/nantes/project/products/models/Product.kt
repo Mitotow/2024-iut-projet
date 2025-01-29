@@ -9,19 +9,19 @@ import java.util.*
 @NamedQuery(name = "Product.deleteById", query = "DELETE FROM Product p WHERE p.id = :id")
 open class Product(
     @Id
-    @GeneratedValue
-    val id: UUID = UUID.randomUUID(),
+    @GeneratedValue(strategy = GenerationType.UUID)
+    open val id: UUID = UUID.randomUUID(),
 
     @Column(nullable = false)
-    val name: String,
+    open val name: String,
 
     @Column(nullable = false)
-    val description: String,
+    open val description: String,
 
     @Embedded
-    val price: Price,
+    open val price: Price,
 
-    @OneToOne(cascade = [CascadeType.ALL])
+    @OneToOne(cascade = [CascadeType.MERGE])
     @JoinColumn(name = "family", referencedColumnName = "id")
-    val family: Family
+    open val family: Family
 )

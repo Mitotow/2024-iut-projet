@@ -14,7 +14,7 @@ open class JpaProductRepository: IRepository<Product, UUID> {
     private lateinit var entityManager: EntityManager
 
     @Transactional
-    override fun save(entity: Product) = entityManager.persist(entity)
+    override fun save(entity: Product) { entityManager.merge(entity) }
 
     override fun findAll(): MutableList<Product> = entityManager.createNamedQuery("Product.findAll", Product::class.java).resultList
 
