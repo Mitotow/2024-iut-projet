@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Profile
 import java.util.*
 
 @Profile("!dev")
-open class JpaFamilyRepository: ISearchableByName<Family, UUID> {
+open class JpaFamilyRepository: ISearchableByName<Family>, IRepository<Family, UUID> {
     @PersistenceContext
     private lateinit var entityManager: EntityManager
 

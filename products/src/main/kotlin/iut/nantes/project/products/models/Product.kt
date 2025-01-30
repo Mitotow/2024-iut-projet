@@ -9,7 +9,6 @@ import java.util.*
 @NamedQuery(name = "Product.deleteById", query = "DELETE FROM Product p WHERE p.id = :id")
 open class Product(
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     open val id: UUID = UUID.randomUUID(),
 
     @Column(nullable = false)

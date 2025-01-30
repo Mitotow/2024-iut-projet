@@ -1,5 +1,6 @@
 package iut.nantes.project.products.services
 
+import iut.nantes.project.products.configs.Messages
 import iut.nantes.project.products.dtos.FamilyDto
 import iut.nantes.project.products.exceptions.DaoException
 import iut.nantes.project.products.interfaces.IDtoFactory
@@ -11,15 +12,17 @@ import java.util.UUID
 
 class FamilyService(
     private val productRepository: IRepository<Product, UUID>,
-    private val familyRepository: ISearchableByName<Family, UUID>,
+    private val familyRepository: IRepository<Family, UUID>,
 ): IDtoFactory<FamilyDto, Family> {
     fun getAllFamilies() = familyRepository.findAll()
 
     fun getFamilyById(id: UUID) = familyRepository.findById(id)
 
     fun createFamily(dto: FamilyDto): Family {
+        if (familyRepository !is ISearchableByName<*>)
+            throw Exception()
         if (familyRepository.searchByName(dto.name).isNotEmpty())
-            throw DaoException("Family '${dto.name}' already exists.")
+            throw DaoException(Messages.FAMILY_NAME_ALREADY_EXISTS)
 
         val family = createFromDto(dto)
         familyRepository.save(family)
@@ -28,7 +31,7 @@ class FamilyService(
 
     fun updateFamily(dto: FamilyDto): Family {
         if (dto.id == null)
-            throw DaoException("An ID is required to update family '${dto.name}'.")
+            throw DaoException(Messages.FAMILY_NO_ID_GIVEN)
 
         val family = createFromDto(dto)
         familyRepository.save(family)

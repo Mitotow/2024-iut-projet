@@ -2,14 +2,18 @@ package iut.nantes.project.products.controllers
 
 import iut.nantes.project.products.annotations.ValidUUID
 import iut.nantes.project.products.dtos.ProductDto
+import iut.nantes.project.products.dtos.ProductFilterDto
 import iut.nantes.project.products.models.Product
 import iut.nantes.project.products.services.ProductService
+import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.util.*
 
+@Validated
 @RestController
 @RequestMapping("/api/v1/products")
 class ProductController(
@@ -17,7 +21,11 @@ class ProductController(
     private val productService: ProductService
 ) {
     @GetMapping
-    fun findAll() = ResponseEntity.ok(productService.getAllProducts())
+    fun findAll(@Valid @ModelAttribute dto: ProductFilterDto?): ResponseEntity<MutableList<Product>> {
+        if (dto != null)
+            return ResponseEntity.ok(productService.getProductWithFilter(dto))
+        return ResponseEntity.ok(productService.getAllProducts())
+    }
 
     @GetMapping("{id}")
     fun findById(@PathVariable @ValidUUID id: String): ResponseEntity<Product> {

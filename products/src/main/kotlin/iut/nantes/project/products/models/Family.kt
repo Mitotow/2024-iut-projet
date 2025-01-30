@@ -10,7 +10,6 @@ import java.util.*
 @NamedQuery(name = "Family.searchByName", query = "SELECT f FROM Family f WHERE f.name = :name")
 open class Family(
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     open val id: UUID = UUID.randomUUID(),
 
     @Column(nullable = false, unique = true)
