@@ -1,6 +1,8 @@
 package iut.nantes.project.products.configs
 
 import iut.nantes.project.products.interceptors.UserHeaderInterceptor
+import iut.nantes.project.products.interfaces.IFamilyRepository
+import iut.nantes.project.products.interfaces.IProductRepository
 import iut.nantes.project.products.interfaces.IRepository
 import iut.nantes.project.products.models.Family
 import iut.nantes.project.products.models.Product
@@ -12,54 +14,41 @@ import iut.nantes.project.products.services.FamilyService
 import iut.nantes.project.products.services.ProductService
 import org.springframework.beans.factory.config.BeanDefinition
 import org.springframework.context.annotation.*
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import org.springframework.web.reactive.function.client.WebClient
 import java.util.UUID
 
 @Configuration
-class AppConfiguration: WebMvcConfigurer {
+class AppConfig {
     // Repositories
     @Bean
     @Profile("!dev")
-    fun productRepository(): IRepository<Product, UUID> = JpaProductRepository()
+    fun productRepository(): IProductRepository = JpaProductRepository()
 
     @Bean
     @Profile("dev")
-    fun productRepositoryDev(): IRepository<Product, UUID> = HmProductRepository()
+    fun productRepositoryDev(): IProductRepository = HmProductRepository()
 
     @Bean
     @Profile("!dev")
-    fun familyRepository(): IRepository<Family, UUID> = JpaFamilyRepository()
+    fun familyRepository(): IFamilyRepository = JpaFamilyRepository()
 
     @Bean
     @Profile("dev")
-    fun familyRepositoryDev(): IRepository<Family, UUID> = HmFamilyRepository()
+    fun familyRepositoryDev(): IFamilyRepository = HmFamilyRepository()
 
     // Services
     @Bean
     @Scope(BeanDefinition.SCOPE_SINGLETON)
     fun productService(
-        productRepository: IRepository<Product, UUID>,
-        familyRepository: IRepository<Family, UUID>,
-    ) = ProductService(productRepository, familyRepository)
+        productRepository: IProductRepository,
+        familyRepository: IFamilyRepository,
+        webClient: WebClient,
+    ) = ProductService(productRepository, familyRepository, webClient)
 
     @Bean
     @Scope(BeanDefinition.SCOPE_SINGLETON)
     fun familyService(
-        productRepository: IRepository<Product, UUID>,
-        familyRepository: IRepository<Family, UUID>
+        productRepository: IProductRepository,
+        familyRepository: IFamilyRepository,
     ) = FamilyService(productRepository, familyRepository)
-
-    // Interceptors
-    @Bean
-    fun userHeaderInterceptor() = UserHeaderInterceptor()
-
-    override fun addInterceptors(registry: InterceptorRegistry) {
-        registry.addInterceptor(userHeaderInterceptor())
-    }
-
-    companion object {
-        fun getContext() =
-            AnnotationConfigApplicationContext(AppConfiguration::class.java)
-    }
 }

@@ -10,7 +10,7 @@ import java.util.*
 @NamedQuery(name = "Family.searchByName", query = "SELECT f FROM Family f WHERE f.name = :name")
 open class Family(
     @Id
-    open val id: UUID = UUID.randomUUID(),
+    open var id: UUID?,
 
     @Column(nullable = false, unique = true)
     open val name: String,

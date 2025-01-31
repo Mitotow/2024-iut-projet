@@ -1,5 +1,6 @@
 package iut.nantes.project.products.repositories
 
+import iut.nantes.project.products.interfaces.IFamilyRepository
 import iut.nantes.project.products.interfaces.IRepository
 import iut.nantes.project.products.interfaces.ISearchableByName
 import iut.nantes.project.products.models.Family
@@ -7,10 +8,10 @@ import org.springframework.context.annotation.Profile
 import java.util.*
 
 @Profile("dev")
-class HmFamilyRepository: ISearchableByName<Family>, IRepository<Family, UUID> {
+class HmFamilyRepository: IFamilyRepository {
     private val map = hashMapOf<UUID, Family>()
 
-    override fun save(entity: Family) { map[entity.id] = entity; }
+    override fun save(entity: Family) { map[entity.id!!] = entity; }
 
     override fun searchByName(name: String): MutableList<Family> = map.values.filter { it.name == name }.toMutableList()
 

@@ -4,6 +4,7 @@ import iut.nantes.project.products.annotations.ValidUUID
 import iut.nantes.project.products.dtos.FamilyDto
 import iut.nantes.project.products.models.Family
 import iut.nantes.project.products.services.FamilyService
+import iut.nantes.project.products.services.ProductService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
@@ -22,8 +23,8 @@ import java.util.*
 @RestController
 @RequestMapping("/api/v1/families")
 class FamilyController(
-    @Autowired
-    private val familyService: FamilyService
+    private val productService: ProductService,
+    private val familyService: FamilyService,
 ) {
     @GetMapping
     fun findAll() = ResponseEntity.ok(familyService.getAllFamilies())
@@ -40,27 +41,33 @@ class FamilyController(
 
     @PostMapping
     fun create(@RequestBody dto: FamilyDto): ResponseEntity<Family> {
-        val f = familyService.createFamily(dto)
+        var family = familyService.createFromDto(dto)
+        family= familyService.createFamily(family)
 
         val location = ServletUriComponentsBuilder
             .fromCurrentRequest()
             .path("/{id}")
-            .buildAndExpand(f.id)
+            .buildAndExpand(family.id)
             .toUri()
 
-        return ResponseEntity.created(location).body(f)
+        return ResponseEntity.created(location).body(family)
     }
 
     @PutMapping
     fun update(@RequestBody dto: FamilyDto): ResponseEntity<Family> {
-        val f = familyService.updateFamily(dto)
-        return ResponseEntity.ok(f)
+        var family = familyService.createFromDto(dto)
+        family = familyService.updateFamily(family)
+
+        return ResponseEntity.ok(family)
     }
 
     @DeleteMapping("{id}")
     fun delete(@PathVariable @ValidUUID id: String): ResponseEntity<Void> {
         val uuid = UUID.fromString(id)
+        if (!familyService.getFamilyById(uuid).isPresent)
+            return ResponseEntity.notFound().build()
         familyService.deleteById(uuid)
+
         return ResponseEntity.noContent().build()
     }
 }

@@ -3,6 +3,7 @@ package iut.nantes.project.products.repositories
 import iut.nantes.project.products.dtos.ProductDto
 import iut.nantes.project.products.dtos.ProductFilterDto
 import iut.nantes.project.products.interfaces.IFilterable
+import iut.nantes.project.products.interfaces.IProductRepository
 import iut.nantes.project.products.models.Product
 import iut.nantes.project.products.interfaces.IRepository
 import iut.nantes.project.products.interfaces.ISearchableByName
@@ -16,7 +17,7 @@ import org.springframework.context.annotation.Profile
 import java.util.*
 
 @Profile("!dev")
-open class JpaProductRepository: IFilterable<Product, ProductDto>, IRepository<Product, UUID> {
+open class JpaProductRepository: IProductRepository {
     @PersistenceContext
     private lateinit var entityManager: EntityManager
 
@@ -26,6 +27,13 @@ open class JpaProductRepository: IFilterable<Product, ProductDto>, IRepository<P
     override fun findAll(): MutableList<Product> = entityManager.createNamedQuery("Product.findAll", Product::class.java).resultList
 
     override fun findById(id: UUID): Optional<Product> = Optional.ofNullable(entityManager.find(Product::class.java, id))
+
+    override fun findByFamilyId(id: UUID): MutableList<Product>  {
+        val query = entityManager.createNamedQuery("Product.findByFamilyId", Product::class.java)
+        query.setParameter("familyId", id)
+
+        return query.resultList
+    }
 
     override fun <F> findWithFilter(filter: F): MutableList<Product> {
         if (filter is ProductFilterDto) {

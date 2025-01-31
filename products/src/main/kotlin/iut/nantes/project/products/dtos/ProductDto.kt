@@ -1,12 +1,12 @@
 package iut.nantes.project.products.dtos
 
+import iut.nantes.project.products.annotations.ValidUUID
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
-import org.hibernate.validator.constraints.UUID
 
 data class ProductDto(
-    @field:UUID
+    @ValidUUID
     val id: String?,
 
     @field:NotBlank(message = "Name is required")
@@ -28,6 +28,6 @@ data class ProductDto(
     @field:Valid
     val price: PriceDto,
 
-    @field:UUID
+    @ValidUUID
     val familyId: String,
 )

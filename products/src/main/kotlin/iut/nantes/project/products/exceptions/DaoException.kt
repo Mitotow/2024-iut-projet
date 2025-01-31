@@ -1,3 +1,3 @@
 package iut.nantes.project.products.exceptions
 
-class DaoException(message: String): Exception(message)
+class DaoException(message: String, val conflict: Boolean = false): Exception(message)

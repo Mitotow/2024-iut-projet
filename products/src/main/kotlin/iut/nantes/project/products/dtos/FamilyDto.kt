@@ -1,11 +1,11 @@
 package iut.nantes.project.products.dtos
 
+import iut.nantes.project.products.annotations.ValidUUID
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
-import org.hibernate.validator.constraints.UUID
 
 class FamilyDto(
-    @field:UUID
+    @ValidUUID
     var id: String?,
 
     @field:NotBlank(message = "Name is required")

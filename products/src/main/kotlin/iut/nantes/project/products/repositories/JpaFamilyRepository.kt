@@ -1,5 +1,6 @@
 package iut.nantes.project.products.repositories
 
+import iut.nantes.project.products.interfaces.IFamilyRepository
 import iut.nantes.project.products.models.Family
 import iut.nantes.project.products.interfaces.IRepository
 import iut.nantes.project.products.interfaces.ISearchableByName
@@ -10,7 +11,7 @@ import org.springframework.context.annotation.Profile
 import java.util.*
 
 @Profile("!dev")
-open class JpaFamilyRepository: ISearchableByName<Family>, IRepository<Family, UUID> {
+open class JpaFamilyRepository: IFamilyRepository {
     @PersistenceContext
     private lateinit var entityManager: EntityManager
 

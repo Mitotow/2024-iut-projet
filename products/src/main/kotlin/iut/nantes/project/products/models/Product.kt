@@ -7,9 +7,10 @@ import java.util.*
 @NamedQuery(name = "Product.findAll", query = "SELECT p FROM Product p")
 @NamedQuery(name = "Product.deleteAll", query = "DELETE FROM Product")
 @NamedQuery(name = "Product.deleteById", query = "DELETE FROM Product p WHERE p.id = :id")
+@NamedQuery(name = "Product.findByFamilyId", query = "SELECT p FROM Product p WHERE p.family = :familyId")
 open class Product(
     @Id
-    open val id: UUID = UUID.randomUUID(),
+    open var id: UUID?,
 
     @Column(nullable = false)
     open val name: String,

@@ -13,6 +13,6 @@ data class ProductFilterDto(
     val minprice: Int?,
 
     @field:Min(100, message = Messages.PRODUCT_FILTER_MINPRICE_INVALID)
-    @field:Max(200, message = Messages.PRODUCT_FILTER_MINPRICE_INVALID)
+    @field:Max(200, message = Messages.PRODUCT_FILTER_MAXPRICE_INVALID)
     val maxprice: Int?,
 )

@@ -17,20 +17,18 @@ import java.util.*
 @RestController
 @RequestMapping("/api/v1/products")
 class ProductController(
-    @Autowired
     private val productService: ProductService
 ) {
     @GetMapping
     fun findAll(@Valid @ModelAttribute dto: ProductFilterDto?): ResponseEntity<MutableList<Product>> {
-        if (dto != null)
-            return ResponseEntity.ok(productService.getProductWithFilter(dto))
-        return ResponseEntity.ok(productService.getAllProducts())
+        return if (dto != null)
+            ResponseEntity.ok(productService.getProductWithFilter(dto))
+        else ResponseEntity.ok(productService.getAllProducts())
     }
 
     @GetMapping("{id}")
     fun findById(@PathVariable @ValidUUID id: String): ResponseEntity<Product> {
         val uuid = UUID.fromString(id)
-
         val product = productService.getProductById(uuid)
 
         return if (product.isPresent) ResponseEntity.ok(product.get())
@@ -39,26 +37,30 @@ class ProductController(
 
     @PostMapping
     fun create(@RequestBody productDto: ProductDto): ResponseEntity<Product> {
-        val p = productService.createProduct(productDto)
+        var product = productService.createFromDto(productDto)
+        product = productService.createProduct(product)
         val location = ServletUriComponentsBuilder
             .fromCurrentRequest()
             .path("/{id}")
-            .buildAndExpand(p.id)
+            .buildAndExpand(product.id)
             .toUri()
 
-        return ResponseEntity.created(location).body(p)
+        return ResponseEntity.created(location).body(product)
     }
 
     @PutMapping
     fun update(@RequestBody productDto: ProductDto): ResponseEntity<Product> {
-        val p = productService.updateProduct(productDto)
-        return ResponseEntity.ok(p)
+        var product = productService.createFromDto(productDto)
+        product = productService.updateProduct(product)
+
+        return ResponseEntity.ok(product)
     }
 
     @DeleteMapping("{id}")
     fun delete(@PathVariable @ValidUUID id: String): ResponseEntity<Void> {
         val uuid = UUID.fromString(id)
         productService.deleteById(uuid)
+
         return ResponseEntity.noContent().build()
     }
 }
