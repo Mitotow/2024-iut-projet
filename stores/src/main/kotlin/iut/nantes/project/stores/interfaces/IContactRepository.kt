@@ -1,3 +1,5 @@
 package iut.nantes.project.stores.interfaces
 
-interface IContactRepository: IRepository
+import iut.nantes.project.stores.models.Contact
+
+interface IContactRepository: IRepository<Contact, Int>
