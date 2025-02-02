@@ -14,7 +14,7 @@ interface IRepository<T, ID> {
      * Enregistre une entité dans le dépôt.
      * @param entity L'entité à sauvegarder.
      */
-    fun save(entity: T)
+    fun save(entity: T): Optional<T>
 
     /**
      * Récupère toutes les entités du dépôt.

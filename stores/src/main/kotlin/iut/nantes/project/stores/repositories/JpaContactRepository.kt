@@ -14,7 +14,7 @@ class JpaContactRepository: IContactRepository {
     private lateinit var entityManager: EntityManager
 
     @Transactional
-    override fun save(entity: Contact) { entityManager.merge(entity) }
+    override fun save(entity: Contact) = Optional.ofNullable(entityManager.merge(entity))
 
     override fun findAll(): MutableList<Contact> = entityManager.createNamedQuery("Contact.findAll", Contact::class.java).resultList
 

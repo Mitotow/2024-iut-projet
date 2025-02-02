@@ -9,7 +9,7 @@ import jakarta.persistence.*
 open class Store(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    open val id: Int,
+    open val id: Int?,
 
     @Column(nullable = false, unique = true)
     open val name: String,

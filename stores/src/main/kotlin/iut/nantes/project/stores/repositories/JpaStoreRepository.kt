@@ -14,7 +14,7 @@ class JpaStoreRepository: IStoreRepository {
     private lateinit var entityManager: EntityManager
 
     @Transactional
-    override fun save(entity: Store) { entityManager.merge(entity) }
+    override fun save(entity: Store) = Optional.ofNullable(entityManager.merge(entity))
 
     override fun findAll(): MutableList<Store> = entityManager.createNamedQuery("Store.findAll", Store::class.java).resultList
 
