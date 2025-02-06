@@ -46,7 +46,7 @@ class StoreController(
                     @PathVariable @ValidUUID productId: String,
                     @RequestParam quantity: Int = 1): ResponseEntity<ProductDto> {
         val quantityValue = if (quantity <= 0) 1 else quantity
-        val store = storeService.addProductToStore(storeId, ProductDto(productId, "", quantityValue))
+        val store = storeService.addProductToStore(storeId, UUID.fromString(productId), quantityValue)
         return ResponseEntity.ok(store)
     }
 
@@ -55,7 +55,7 @@ class StoreController(
                    @PathVariable @ValidUUID productId: String,
                    @RequestParam quantity: Int = 1): ResponseEntity<ProductDto> {
         val quantityValue = if (quantity <= 0) 1 else quantity
-        val store = storeService.removeProductFromStore(storeId, ProductDto(productId, "", quantityValue))
+        val store = storeService.removeProductFromStore(storeId, UUID.fromString(productId), quantityValue)
         return ResponseEntity.ok(store)
     }
 

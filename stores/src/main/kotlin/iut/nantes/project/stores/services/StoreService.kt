@@ -4,20 +4,17 @@ import iut.nantes.project.stores.dtos.ContactDto
 import iut.nantes.project.stores.dtos.ProductDto
 import iut.nantes.project.stores.dtos.StoreDto
 import iut.nantes.project.stores.exceptions.DaoException
-import iut.nantes.project.stores.exceptions.DtoFactoryException
-import iut.nantes.project.stores.interfaces.IDtoToEntity
-import iut.nantes.project.stores.models.Contact
-import iut.nantes.project.stores.models.Product
-import iut.nantes.project.stores.models.Store
 import iut.nantes.project.stores.repositories.IStoreRepository
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.web.reactive.function.client.WebClient
 import java.util.UUID
 
 @Service
 class StoreService(
     private val storeRepository: IStoreRepository,
     private val contactService: ContactService,
+    private val webClient: WebClient,
 ) {
     fun getAllStores() = storeRepository.findAll().map { it.createDto() }
 
@@ -50,17 +47,19 @@ class StoreService(
 
     fun deleteStore(id: Long) = storeRepository.deleteById(id)
 
-    fun addProductToStore(storeId: Long, dto: ProductDto): ProductDto {
+    fun addProductToStore(storeId: Long, productId: UUID, qt: Int): ProductDto {
         val store = storeRepository.findById(storeId).orElse(null)
             ?: throw DaoException("Product with id $storeId not found", HttpStatus.NOT_FOUND)
-        val uuid = UUID.fromString(dto.id)
 
-        var product = store.products.find { it.id == uuid }
+        var product = store.products.find { it.id == productId }
         if (product != null)
-            product.quantity += dto.quantity
+            product.quantity += qt
         else {
-            // TODO: Check product existence by calling the products service
-            product = Product(uuid, dto.name, dto.quantity)
+            val dto = retrieveProduct(productId)
+                ?: throw DaoException("Product with id $productId not found", HttpStatus.NOT_FOUND)
+            dto.quantity = qt
+
+            product = dto.createEntity()
             store.products.add(product)
             storeRepository.save(store)
         }
@@ -68,19 +67,24 @@ class StoreService(
         return product.createDto()
     }
 
-    fun removeProductFromStore(storeId: Long, dto: ProductDto): ProductDto {
+    fun removeProductFromStore(storeId: Long, productId: UUID, qt: Int): ProductDto {
         val store = storeRepository.findById(storeId).orElse(null)
             ?: throw DaoException("Product with id $storeId not found", HttpStatus.NOT_FOUND)
-        val uuid = UUID.fromString(dto.id)
 
-        val product = store.products.find { it.id == uuid }
+        val product = store.products.find { it.id == productId }
             ?: throw DaoException("Product not found", HttpStatus.NOT_FOUND)
 
-        if (product.quantity - dto.quantity < 0)
+        if (product.quantity - qt < 0)
             throw DaoException("Product quantity cannot be negative or null", HttpStatus.CONFLICT)
 
-        product.quantity -= dto.quantity
+        product.quantity -= qt
         storeRepository.save(store)
         return product.createDto()
+    }
+
+    private fun retrieveProduct(id: UUID): ProductDto? {
+        return webClient.get().uri("/products/$id")
+            .retrieve().bodyToMono(ProductDto::class.java)
+            .block()
     }
 }

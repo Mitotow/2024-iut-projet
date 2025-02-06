@@ -19,6 +19,9 @@ spring:
     console:
       enabled: true
 
+  config:
+    import: "classpath:products.yml"
+
 server:
   port: 8082
 

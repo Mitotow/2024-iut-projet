@@ -16,10 +16,9 @@ import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.servlet.resource.NoResourceFoundException
 
 @ControllerAdvice
-class AdviceController {
-    @Autowired
-    private lateinit var env: Environment
-
+class AdviceController(
+    private val env: Environment
+) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     @ExceptionHandler(DaoException::class)
