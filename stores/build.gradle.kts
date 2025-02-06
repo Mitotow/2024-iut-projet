@@ -4,6 +4,7 @@ plugins {
 	kotlin("plugin.jpa") version "1.9.25"
 	id("org.springframework.boot") version "3.3.5"
 	id("io.spring.dependency-management") version "1.1.6"
+	id("org.jetbrains.kotlin.plugin.allopen") version "1.9.22"
 }
 
 group = "iut.nantes.project"
@@ -46,6 +47,10 @@ kotlin {
 	compilerOptions {
 		freeCompilerArgs.addAll("-Xjsr305=strict")
 	}
+}
+
+allOpen {
+	annotation("jakarta.persistence.Entity")
 }
 
 tasks.withType<Test> {

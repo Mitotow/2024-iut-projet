@@ -6,12 +6,12 @@ package iut.nantes.project.stores.interfaces
  * @param D Type du DTO (Data Transfer Object).
  * @param T Type de l'entité résultante.
  */
-interface IDtoFactory<D, T> {
+interface IDtoToEntity<E> {
 
     /**
      * Crée une entité à partir d'un DTO.
      * @param dto Le DTO à transformer.
      * @return L'entité correspondante.
      */
-    fun createFromDto(dto: D): T
+    fun createEntity(): E
 }

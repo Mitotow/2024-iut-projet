@@ -1,23 +1,31 @@
 package iut.nantes.project.stores.models
 
+import iut.nantes.project.stores.dtos.StoreDto
+import iut.nantes.project.stores.interfaces.IEntityToDto
 import jakarta.persistence.*
 
 @Entity
-@NamedQuery(name = "Store.findAll", query = "SELECT s from Store s")
-@NamedQuery(name = "Store.deleteById", query = "DELETE FROM Store s WHERE s.id=:id")
-@NamedQuery(name = "Store.deleteAll", query = "DELETE FROM Store s")
 open class Store(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    open val id: Int?,
+    var id: Long?,
 
     @Column(nullable = false, unique = true)
-    open val name: String,
+    var name: String,
 
-    @OneToOne(cascade = [CascadeType.MERGE])
+    @ManyToOne
     @JoinColumn(name = "contact", referencedColumnName = "id")
-    open val contact: Contact,
+    var contact: Contact,
 
-    @OneToMany(mappedBy = "store", cascade = [CascadeType.MERGE])
-    open val products: Set<Product> = emptySet()
-)
+    @OneToMany(cascade = [CascadeType.ALL])
+    var products: MutableList<Product> = mutableListOf()
+): IEntityToDto<StoreDto> {
+    override fun createDto(): StoreDto {
+        return StoreDto(
+            id = this.id,
+            name = this.name,
+            contact = this.contact.createDto(),
+            products = this.products.map { it.createDto() },
+        )
+    }
+}

@@ -1,5 +1,28 @@
-
 spring:
-  application.name: stores
+  profiles:
+    active: dev
+
+  application:
+    name: stores
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+
+  datasource:
+    url: jdbc:h2:file:.file./data/test
+    driverClassName: org.h2.Driver
+    username: username
+    password: password
+
+  h2:
+    console:
+      enabled: true
+
 server:
   port: 8082
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    iut.nantes.project.products.controllers: DEBUG

@@ -1,17 +1,30 @@
 package iut.nantes.project.stores.dtos
 
+import iut.nantes.project.stores.interfaces.IDtoToEntity
+import iut.nantes.project.stores.models.Store
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
 
 data class StoreDto(
-    val id: Int?,
+    var id: Long?,
 
     @field:NotBlank(message = "Name is required")
-    val name: String,
+    var name: String,
 
-    @field:NotBlank(message = "Contact is required")
-    val contact: Int,
+    @field:NotNull
+    @field:Valid
+    var contact: ContactDto,
 
     @field:Valid
-    val products: List<ProductDto>
-)
+    var products: List<ProductDto>
+): IDtoToEntity<Store> {
+    override fun createEntity(): Store {
+        return Store(
+            this.id,
+            this.name,
+            this.contact.createEntity(),
+            this.products.map { it.createEntity() }.toMutableList(),
+        )
+    }
+}

@@ -23,7 +23,7 @@ class AdviceController {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     @ExceptionHandler(DaoException::class)
-    fun handleDaoException(e: DaoException) = ResponseEntity.status(if (e.conflict) HttpStatus.CONFLICT else HttpStatus.BAD_REQUEST).body(ErrorBody(HttpStatus.BAD_REQUEST, e.message))
+    fun handleDaoException(e: DaoException) = ResponseEntity.status(e.status).body(ErrorBody(e.status, e.message))
 
     @ExceptionHandler(DtoFactoryException::class)
     fun handleDtoFactoryException(e: DtoFactoryException) = ResponseEntity.badRequest().body(ErrorBody(HttpStatus.BAD_REQUEST, e.message))

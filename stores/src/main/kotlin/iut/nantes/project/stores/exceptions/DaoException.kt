@@ -1,3 +1,5 @@
 package iut.nantes.project.stores.exceptions
 
-class DaoException(message: String, val conflict: Boolean = false): Exception(message)
+import org.springframework.http.HttpStatus
+
+class DaoException(message: String, val status: HttpStatus = HttpStatus.BAD_REQUEST): Exception(message)

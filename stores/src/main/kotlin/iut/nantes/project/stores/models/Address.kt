@@ -1,10 +1,22 @@
 package iut.nantes.project.stores.models
 
-import jakarta.persistence.Embeddable
+import iut.nantes.project.stores.dtos.AddressDto
+import iut.nantes.project.stores.interfaces.IEntityToDto
+import jakarta.persistence.*
 
-@Embeddable
+@Entity
 open class Address(
-    val street: String,
-    val city: String,
-    val postalCode: String,
-)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long? = null,
+    var street: String,
+    var city: String,
+    var postalCode: String,
+): IEntityToDto<AddressDto> {
+    override fun createDto(): AddressDto {
+        return AddressDto(
+            street = this.street,
+            city = this.city,
+            postalCode = this.postalCode,
+        )
+    }
+}
