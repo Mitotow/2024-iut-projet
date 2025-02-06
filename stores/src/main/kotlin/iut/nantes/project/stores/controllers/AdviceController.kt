@@ -2,10 +2,8 @@ package iut.nantes.project.stores.controllers
 
 import iut.nantes.project.stores.configs.Messages
 import iut.nantes.project.stores.exceptions.DaoException
-import iut.nantes.project.stores.exceptions.DtoFactoryException
 import jakarta.validation.ConstraintViolationException
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -23,9 +21,6 @@ class AdviceController(
 
     @ExceptionHandler(DaoException::class)
     fun handleDaoException(e: DaoException) = ResponseEntity.status(e.status).body(ErrorBody(e.status, e.message))
-
-    @ExceptionHandler(DtoFactoryException::class)
-    fun handleDtoFactoryException(e: DtoFactoryException) = ResponseEntity.badRequest().body(ErrorBody(HttpStatus.BAD_REQUEST, e.message))
 
     @ExceptionHandler(ResponseStatusException::class)
     fun handleResponseStatusException(e: ResponseStatusException) = ResponseEntity.status(e.statusCode).body(ErrorBody(e.statusCode as HttpStatus, e.reason))
